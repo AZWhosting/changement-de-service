@@ -7,7 +7,266 @@
   <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.6/dist/signature_pad.umd.min.js"></script>
   <style>
     body {
+      font-family: sans-serif;<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Demande de Changement de Service</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.6/dist/signature_pad.umd.min.js"></script>
+  <style>
+    body {
       font-family: sans-serif;
+      background: #eee;
+      padding: 0;
+      margin: 0;
+    }
+    .wrapper {
+      position: relative;
+      width: 595px;
+      max-width: 595px;
+      background: #fff;
+      box-shadow: 0 0 10px rgba(0,0,0,.2);
+      margin: 20px auto;
+    }
+
+    /* Styles spécifiques pour la capture PDF */
+    .wrapper.pdf-capture {
+      margin: 0;
+      box-shadow: none;
+      width: 595px !important;
+      height: 840px !important;
+      overflow: hidden;
+    }
+
+    .wrapper.pdf-capture .fond {
+      width: 595px;
+      height: 840px;
+      object-fit: fill;
+      object-position: 0 0;
+    }
+    .fond {
+      display: block;
+      width: 100%;
+      height: auto;
+      z-index: 1;
+    }
+    .champ {
+      position: absolute;
+      z-index: 10;
+      background: transparent;
+      border: none;
+      padding: 2px 4px;
+      font-size: 12px;
+      font-family: Arial, sans-serif;
+    }
+    .signature-canvas {
+      position: absolute;
+      z-index: 10;
+      border: 1px solid #999;
+      background: rgba(255,255,255,0.9);
+      cursor: crosshair;
+    }
+    .checkbox {
+      position: absolute;
+      z-index: 10;
+      width: 15px;
+      height: 15px;
+      transform: scale(1.2);
+    }
+
+    /* Date de la demande */
+    #dateDemande { top: 30px; left: 344px; width: 120px; }
+
+    /* Section L'AGENT demande */
+    #planifieService1 { top: 260px; left: 197px; width: 100px; }
+    #jourDate1 { top: 283px; left: 197px; width: 100px; }
+    #etaitRepos1 { top: 305px; left: 197px; width: 100px; }
+
+    #effectuerService1 { top: 260px; left: 455px; width: 95px; }
+    #jourDate1b { top: 283px; left: 455px; width: 95px; }
+    #seraRepos1 { top: 305px; left: 455px; width: 95px; }
+
+    #servicePrecedent1 { top: 372px; left: 324px; width: 60px; }
+    #serviceChangement1 { top: 372px; left: 404px; width: 52px; }
+    #serviceSuivant1 { top: 372px; left: 466px; width: 60px; }
+
+    /* Section L'AGENT accepte */
+    #planifieService2 { top: 462px; left: 197px; width: 100px; }
+    #jourDate2 { top: 485px; left: 197px; width: 100px; }
+    #etaitRepos2 { top: 508px; left: 197px; width: 100px; }
+
+    #effectuerService2 { top: 462px; left: 455px; width: 95px; }
+    #jourDate2b { top: 485px; left: 455px; width: 95px; }
+    #seraRepos2 { top: 508px; left: 455px; width: 95px; }
+
+    #servicePrecedent2 { top: 571px; left: 324px; width: 60px; }
+    #serviceChangement2 { top: 571px; left: 404px; width: 52px; }
+    #serviceSuivant2 { top: 571px; left: 466px; width: 60px; }
+
+    /* Noms des agents */
+    #nomAgent1 { top: 229px; left: 103px; width: 326px; }
+    #nomAgent2 { top: 432px; left: 103px; width: 326px; }
+
+    /* Signatures */
+    #signatureAgent1 { top: 634px; left: 40px; width: 255px; height: 45px; }
+    #signatureAgent2 { top: 634px; left: 303px; width: 255px; height: 45px; }
+
+    .actions {
+      margin-top: 20px;
+      text-align: center;
+    }
+    .actions button {
+      margin: 5px;
+      padding: 10px 20px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="wrapper" id="capture">
+    <img src="./background-form.jpg" alt="doc" class="fond">
+
+    <!-- Date de la demande -->
+    <input id="dateDemande" class="champ" type="date">
+
+    <!-- Section L'AGENT demande -->
+    <input id="planifieService1" class="champ" type="text" placeholder="N° service">
+    <input id="jourDate1" class="champ" type="date">
+    <input id="etaitRepos1" class="champ" type="date">
+
+    <input id="effectuerService1" class="champ" type="text" placeholder="N° service">
+    <input id="jourDate1b" class="champ" type="date">
+    <input id="seraRepos1" class="champ" type="date">
+
+    <input id="servicePrecedent1" class="champ" type="text" placeholder="N°">
+    <input id="serviceChangement1" class="champ" type="text" placeholder="N°">
+    <input id="serviceSuivant1" class="champ" type="text" placeholder="N°">
+
+    <!-- Section L'AGENT accepte -->
+    <input id="planifieService2" class="champ" type="text" placeholder="N° service">
+    <input id="jourDate2" class="champ" type="date">
+    <input id="etaitRepos2" class="champ" type="date">
+
+    <input id="effectuerService2" class="champ" type="text" placeholder="N° service">
+    <input id="jourDate2b" class="champ" type="date">
+    <input id="seraRepos2" class="champ" type="date">
+
+    <input id="servicePrecedent2" class="champ" type="text" placeholder="N°">
+    <input id="serviceChangement2" class="champ" type="text" placeholder="N°">
+    <input id="serviceSuivant2" class="champ" type="text" placeholder="N°">
+
+    <!-- Noms des agents -->
+    <input id="nomAgent1" class="champ" type="text" placeholder="Nom de l'agent demandeur">
+    <input id="nomAgent2" class="champ" type="text" placeholder="Nom de l'agent accepteur">
+
+    <!-- Signatures -->
+    <canvas id="signatureAgent1" class="signature-canvas"></canvas>
+    <canvas id="signatureAgent2" class="signature-canvas"></canvas>
+  </div>
+
+  <div class="actions">
+    <button id="clearAgent1">Effacer signature agent 1</button>
+    <button id="clearAgent2">Effacer signature agent 2</button>
+    <button id="save">Télécharger le PDF</button>
+  </div>
+
+  <script>
+    // Option pour vider automatiquement les champs au chargement (si nécessaire à l'avenir)
+    /*
+    window.addEventListener('load', function() {
+      // Vider tous les champs texte et date
+      document.querySelectorAll('input[type="text"], input[type="date"]').forEach(input => {
+        input.value = '';
+      });
+
+      // Vider les signatures
+      signaturePadAgent1.clear();
+      signaturePadAgent2.clear();
+    });
+    */
+
+    // Initialisation des pads de signature
+    const canvasAgent1 = document.getElementById('signatureAgent1');
+    const canvasAgent2 = document.getElementById('signatureAgent2');
+
+    const signaturePadAgent1 = new SignaturePad(canvasAgent1);
+    const signaturePadAgent2 = new SignaturePad(canvasAgent2);
+
+    function resizeCanvas(canvas, signaturePad) {
+      const ratio = Math.max(window.devicePixelRatio || 1, 1);
+      canvas.width = canvas.offsetWidth * ratio;
+      canvas.height = canvas.offsetHeight * ratio;
+      canvas.getContext("2d").scale(ratio, ratio);
+      signaturePad.clear();
+    }
+
+    function initSignatures() {
+      resizeCanvas(canvasAgent1, signaturePadAgent1);
+      resizeCanvas(canvasAgent2, signaturePadAgent2);
+    }
+
+    window.addEventListener("resize", initSignatures);
+    initSignatures();
+
+    // Gestion des boutons d'effacement
+    document.getElementById('clearAgent1').addEventListener('click', () => signaturePadAgent1.clear());
+    document.getElementById('clearAgent2').addEventListener('click', () => signaturePadAgent2.clear());
+
+    // Génération du PDF
+    const img = document.querySelector('.fond');
+    document.getElementById('save').addEventListener('click', () => {
+      if (!img.complete) {
+        img.addEventListener('load', generatePDF);
+      } else {
+        generatePDF();
+      }
+    });
+
+    function generatePDF() {
+      const element = document.getElementById('capture');
+
+      // Ajouter la classe pour la capture PDF
+      element.classList.add('pdf-capture');
+
+      // Détecter si on est sur mobile
+      const isMobile = window.innerWidth <= 768;
+
+      html2pdf()
+        .set({
+          margin: 0,
+          filename: 'demande-changement-service.pdf',
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: {
+            scale: isMobile ? 2 : 3,
+            dpi: 300,
+            useCORS: true,
+            backgroundColor: '#fff',
+            x: isMobile ? 0 : 560,     // Pas de décalage sur mobile
+            y: 0,
+            scrollX: 0,
+            scrollY: 0,
+            windowWidth: isMobile ? 595 : undefined,
+            windowHeight: isMobile ? 840 : undefined
+          },
+          jsPDF: {
+            unit: 'pt',
+            format: 'a4',
+            orientation: 'portrait'
+          }
+        })
+        .from(element)
+        .save()
+        .then(() => {
+          // Retirer la classe après génération
+          element.classList.remove('pdf-capture');
+        });
+    }
+  </script>
+</body>
+</html>
+
       background: #eee;
       padding: 0;
       margin: 0;
@@ -257,3 +516,4 @@
   </script>
 </body>
 </html>
+
