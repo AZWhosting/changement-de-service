@@ -118,7 +118,7 @@
 <body>
 
   <div class="wrapper" id="capture">
-    <img src="./background-form.jpg" alt="doc" class="fond">
+    <img src="./background-form.jpg" alt="doc" class="fond" crossorigin="anonymous">
 
     <!-- Date de la demande -->
     <input id="dateDemande" class="champ" type="date" pattern="\d{2}-\d{2}-\d{4}" placeholder="JJ-MM-AAAA">
@@ -217,12 +217,29 @@
     // Génération du PDF
     const img = document.querySelector('.fond');
     document.getElementById('save').addEventListener('click', () => {
-      if (!img.complete) {
-        img.addEventListener('load', generatePDF);
-      } else {
-        generatePDF();
-      }
+      ensureBackgroundReady().then(generatePDF);
     });
+
+    async function ensureBackgroundReady() {
+      if (img.dataset.ready === 'true') return;
+
+      if (!img.complete || img.naturalWidth === 0) {
+        await new Promise((resolve) => img.addEventListener('load', resolve, { once: true }));
+      }
+
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        img.src = canvas.toDataURL('image/jpeg', 0.98);
+        img.dataset.ready = 'true';
+      } catch (error) {
+        // En cas d'échec (ex. contexte file://), on considère l'image prête si elle est déjà chargée
+        img.dataset.ready = 'true';
+      }
+    }
 
     function formatDateValue(value) {
       if (!value || !value.includes('-')) return value;
