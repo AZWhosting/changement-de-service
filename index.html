@@ -224,11 +224,42 @@
       }
     });
 
+    function formatDateValue(value) {
+      if (!value || !value.includes('-')) return value;
+      const [year, month, day] = value.split('-');
+      return `${day}/${month}/${year}`;
+    }
+
+    function prepareDateInputsForExport() {
+      const dateInputs = Array.from(document.querySelectorAll('input[type="date"]'));
+      return dateInputs.map(input => {
+        const originalValue = input.value;
+        const formatted = formatDateValue(originalValue);
+
+        input.setAttribute('data-original-type', input.type);
+        input.type = 'text';
+        input.value = formatted;
+
+        return { input, originalValue };
+      });
+    }
+
+    function restoreDateInputs(inputsState) {
+      inputsState.forEach(({ input, originalValue }) => {
+        input.type = input.getAttribute('data-original-type') || 'date';
+        input.value = originalValue;
+        input.removeAttribute('data-original-type');
+      });
+    }
+
     function generatePDF() {
       const element = document.getElementById('capture');
 
       // Ajouter la classe pour la capture PDF
       element.classList.add('pdf-capture');
+
+      // Formatage des dates pour l'export PDF
+      const inputsState = prepareDateInputsForExport();
 
       // Détecter si on est sur mobile
       const isMobile = window.innerWidth <= 768;
@@ -273,6 +304,7 @@
         .then(() => {
           // Retirer la classe après génération
           element.classList.remove('pdf-capture');
+          restoreDateInputs(inputsState);
         });
     }
   </script>
