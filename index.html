@@ -233,6 +233,28 @@
       // Détecter si on est sur mobile
       const isMobile = window.innerWidth <= 768;
 
+      // Sauvegarder et convertir les dates AVANT la capture
+      const dateInputs = document.querySelectorAll('input[type="date"]');
+      const savedDates = [];
+
+      dateInputs.forEach(input => {
+        savedDates.push({
+          element: input,
+          originalValue: input.value,
+          originalType: input.type
+        });
+
+        if (input.value) {
+          // Convertir YYYY-MM-DD en DD/MM/YYYY
+          const [year, month, day] = input.value.split('-');
+          const formattedDate = `${day}/${month}/${year}`;
+
+          // Changer temporairement en type text
+          input.type = 'text';
+          input.value = formattedDate;
+        }
+      });
+
       html2pdf()
         .set({
           margin: 0,
@@ -273,6 +295,12 @@
         .then(() => {
           // Retirer la classe après génération
           element.classList.remove('pdf-capture');
+
+          // Restaurer les dates originales
+          savedDates.forEach(saved => {
+            saved.element.type = saved.originalType;
+            saved.element.value = saved.originalValue;
+          });
         });
     }
   </script>
